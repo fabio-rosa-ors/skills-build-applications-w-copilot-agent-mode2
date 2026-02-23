@@ -5,11 +5,9 @@ export default function Teams({ apiBase }) {
   const endpoint = `${apiBase}/teams/`;
 
   useEffect(() => {
-    console.log('Fetching Teams from', endpoint);
     fetch(endpoint)
       .then((res) => res.json())
       .then((data) => {
-        console.log('Teams fetched raw data:', data);
         const list = Array.isArray(data) ? data : data?.results ?? [];
         setItems(list);
       })
@@ -18,14 +16,41 @@ export default function Teams({ apiBase }) {
 
   return (
     <div className="container mt-4">
-      <h2>Teams</h2>
-      <ul className="list-group">
-        {items.map((it, idx) => (
-          <li key={it.id ?? idx} className="list-group-item">
-            {it.name ?? JSON.stringify(it)}
-          </li>
-        ))}
-      </ul>
+      <div className="card">
+        <div className="card-header">
+          <h2 className="h5 mb-0">Teams</h2>
+        </div>
+        <div className="card-body p-0">
+          <table className="table table-hover table-sm mb-0">
+            <thead>
+              <tr>
+                <th style={{width: '80px'}}>ID</th>
+                <th>Team</th>
+                <th style={{width: '220px'}}>Members</th>
+                <th style={{width: '140px'}}>Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              {items.length === 0 && (
+                <tr>
+                  <td colSpan="4" className="small-muted text-center py-3">No teams</td>
+                </tr>
+              )}
+              {items.map((it, idx) => (
+                <tr key={it.id ?? idx}>
+                  <td>{it.id ?? '-'}</td>
+                  <td>{it.name ?? JSON.stringify(it)}</td>
+                  <td>{(it.members || []).length ?? it.member_count ?? '-'}</td>
+                  <td>
+                    <button className="btn btn-sm btn-primary me-2">Open</button>
+                    <button className="btn btn-sm btn-outline-primary">Manage</button>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </div>
     </div>
   );
 }

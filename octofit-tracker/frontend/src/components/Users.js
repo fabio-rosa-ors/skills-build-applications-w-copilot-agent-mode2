@@ -5,11 +5,9 @@ export default function Users({ apiBase }) {
   const endpoint = `${apiBase}/users/`;
 
   useEffect(() => {
-    console.log('Fetching Users from', endpoint);
     fetch(endpoint)
       .then((res) => res.json())
       .then((data) => {
-        console.log('Users fetched raw data:', data);
         const list = Array.isArray(data) ? data : data?.results ?? [];
         setItems(list);
       })
@@ -18,14 +16,41 @@ export default function Users({ apiBase }) {
 
   return (
     <div className="container mt-4">
-      <h2>Users</h2>
-      <ul className="list-group">
-        {items.map((it, idx) => (
-          <li key={it.id ?? idx} className="list-group-item">
-            {it.username ?? it.email ?? JSON.stringify(it)}
-          </li>
-        ))}
-      </ul>
+      <div className="card">
+        <div className="card-header">
+          <h2 className="h5 mb-0">Users</h2>
+        </div>
+        <div className="card-body p-0">
+          <table className="table table-hover table-sm mb-0">
+            <thead>
+              <tr>
+                <th style={{width: '80px'}}>ID</th>
+                <th>Username</th>
+                <th style={{width: '240px'}}>Email</th>
+                <th style={{width: '140px'}}>Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              {items.length === 0 && (
+                <tr>
+                  <td colSpan="4" className="small-muted text-center py-3">No users</td>
+                </tr>
+              )}
+              {items.map((it, idx) => (
+                <tr key={it.id ?? idx}>
+                  <td>{it.id ?? '-'}</td>
+                  <td>{it.username ?? it.name ?? JSON.stringify(it)}</td>
+                  <td>{it.email ?? it.email_address ?? '-'}</td>
+                  <td>
+                    <button className="btn btn-sm btn-primary me-2">Profile</button>
+                    <button className="btn btn-sm btn-outline-primary">Message</button>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </div>
     </div>
   );
 }

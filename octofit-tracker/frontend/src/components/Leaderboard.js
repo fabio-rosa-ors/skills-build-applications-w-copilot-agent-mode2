@@ -5,11 +5,9 @@ export default function Leaderboard({ apiBase }) {
   const endpoint = `${apiBase}/leaderboard/`;
 
   useEffect(() => {
-    console.log('Fetching Leaderboard from', endpoint);
     fetch(endpoint)
       .then((res) => res.json())
       .then((data) => {
-        console.log('Leaderboard fetched raw data:', data);
         const list = Array.isArray(data) ? data : data?.results ?? [];
         setItems(list);
       })
@@ -18,14 +16,41 @@ export default function Leaderboard({ apiBase }) {
 
   return (
     <div className="container mt-4">
-      <h2>Leaderboard</h2>
-      <ol className="list-group list-group-numbered">
-        {items.map((it, idx) => (
-          <li key={it.id ?? idx} className="list-group-item">
-            {it.username ?? it.name ?? JSON.stringify(it)}
-          </li>
-        ))}
-      </ol>
+      <div className="card">
+        <div className="card-header">
+          <h2 className="h5 mb-0">Leaderboard</h2>
+        </div>
+        <div className="card-body p-0">
+          <table className="table table-hover table-sm mb-0">
+            <thead>
+              <tr>
+                <th style={{width: '60px'}}>#</th>
+                <th>User</th>
+                <th style={{width: '140px'}}>Score</th>
+                <th style={{width: '140px'}}>Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              {items.length === 0 && (
+                <tr>
+                  <td colSpan="4" className="small-muted text-center py-3">No leaderboard entries</td>
+                </tr>
+              )}
+              {items.map((it, idx) => (
+                <tr key={it.id ?? idx}>
+                  <td>{idx + 1}</td>
+                  <td>{it.username ?? it.name ?? it.user ?? JSON.stringify(it)}</td>
+                  <td>{it.score ?? it.points ?? it.total ?? '-'}</td>
+                  <td>
+                    <button className="btn btn-sm btn-primary me-2">View</button>
+                    <button className="btn btn-sm btn-outline-primary">Message</button>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </div>
     </div>
   );
 }
